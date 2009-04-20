@@ -109,6 +109,21 @@ module Mongrel
     HTTP_IF_NONE_MATCH="HTTP_IF_NONE_MATCH".freeze
     REDIRECT = "HTTP/1.1 302 Found\r\nLocation: %s\r\nConnection: close\r\n\r\n".freeze
     HOST = "HOST".freeze
+
+
+    # These content-types get long expiry times
+    LONG_EXPIRY_TYPES = [
+	  'text/javascript',
+	  'text/css',
+	  'image/gif',
+	  'image/jpeg',
+	  'image/jpg',
+	  'image/png',
+	].freeze
+
+    # The duration of the long expiry (10 years in seconds)
+    LONG_EXPIRY = (10 * ( 60 ** 2 * 24 * 365.25 )).freeze
+
   end
 
 end

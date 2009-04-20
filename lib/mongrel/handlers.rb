@@ -231,12 +231,21 @@ module Mongrel
         header[Const::LAST_MODIFIED] = mtime.httpdate
 
         # Set the mime type from our map based on the ending
+	content_type = ""
+
         dot_at = req_path.rindex('.')
         if dot_at
-          header[Const::CONTENT_TYPE] = MIME_TYPES[req_path[dot_at .. -1]] || @default_content_type
-        else
-          header[Const::CONTENT_TYPE] = @default_content_type
+          content_type = MIME_TYPES[req_path[dot_at .. -1]]
         end
+
+	header[Const::CONTENT_TYPE] = content_type || @default_content_type
+
+	if Const::LONG_EXPIRY_TYPES.include?( content_type )
+	  # expires @ last mod + 10 years
+	  expires = mtime + Const::LONG_EXPIRY
+	  header[:Expires] = expires.ctime
+	end
+
 
         # send a status with out content length
         response.send_status(stat.size)
